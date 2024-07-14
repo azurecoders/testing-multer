@@ -6,9 +6,18 @@ cloudinary.config({
   api_secret: "qccBhzifZ8gDvgooKHMujKTPPxE",
 });
 
-export const uploadOnCloudinary = async (localFilePath) => {
+export const uploadOnCloudinary = async (buffer) => {
   try {
-    const response = await cloudinary.uploader.upload(localFilePath);
+    const response = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream((error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
+      });
+      stream.end(buffer);
+    });
     return response;
   } catch (error) {
     console.log(error);
