@@ -10,6 +10,13 @@ router.post("/file-upload", upload.single("profilePic"), async (req, res) => {
   console.log(req.file);
   const response = await uploadOnCloudinary(req.file.path);
 
+  fs.unlink(req.file.path, (err) => {
+    if (err) console.log(err);
+    else {
+      console.log("File Deleted Successfuly");
+    }
+  });
+
   if (response !== null) {
     const newFileUrl = new File({ fileUrl: response.secure_url });
     await newFileUrl.save();
